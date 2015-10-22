@@ -124,7 +124,7 @@ form.signup input.form-control:focus {
 #wrapper {
 	text-align: center;
 	padding: 50px 0;
-	background: url(http://uber47.com.br/blog/wp-content/uploads/2014/08/Brandt_03.jpg) no-repeat center top;
+	background: url(http://b.rarewallpapers.com/media/wallpapers_1024x600/1/bicycle-by-a-brick-wall-4334.jpg) no-repeat center top;
 	background-attachment: relative;
 	background-position: center center;
 	min-height: 650px;
@@ -142,19 +142,25 @@ form.signup input.form-control:focus {
 
 
 
-#wrapper h1 {
-	margin-top: 60px;
-	margin-bottom: 40px;
-	color: #fff;
-	font-size: 85px;
-	font-weight: 900;
-	letter-spacing: -1px;
+h1 {
+    font-family: 'Allan', Helvetica, Arial, sans-serif;
+    font-size: 70px;
+    line-height: 75px;
+}
+ 
+p {
+    font-family: 'Cardo', Georgia, Times, serif;
+    font-size: 18px;
+    line-height: 25px;
 }
 
 h2.subtitle {
 	color: #000;
-	font-size: 35px;
+	font-size: 45px;
+  line-height: 25px;
+
 }
+
 
 /* countdown */
 #countdown {
