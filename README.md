@@ -1,5 +1,5 @@
 # pedrox86lopes.github.io
-Projeto simples de uma casa para alugar, apenas com um contato, e alguns detalhes ;)
+SIMPLE CV IN HTML AND CSS ;)
 ===================
 
 - - - - 
