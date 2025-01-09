@@ -51,7 +51,7 @@
 </head>
 <body>
   <div id="terminal">
-    <div>Welcome to the Terminal!</div>
+    <div>Welcome to the <strong>Terminal</strong></div>
     <div>Type <strong>help</strong> to see available commands.</div>
     <div>>:</div>
   </div>
@@ -65,16 +65,21 @@
       terminal.appendChild(line);
       terminal.scrollTop = terminal.scrollHeight;
     }
-    
+
     function processCommand(input) {
-      switch (input.toLowerCase()) {
+      switch (input.toLowerCase().trim()) {
         case 'help':
           appendToTerminal('Available commands:');
           appendToTerminal(' - help');
           appendToTerminal(' - Get Pedro Email');
+          appendToTerminal(' - Where Pedro is located?');
+
           break;
         case 'get pedro email':
-          appendToTerminal('Pedro Email: pedro@example.com');
+          appendToTerminal('Pedro Email: pedro.lopes@tutamail.com');
+          break;
+        case 'Where Pedro is located?'':
+          appendToTerminal('You (maybe) can find me in Portugal - But, im always Online Remotelly :) ');
           break;
         default:
           appendToTerminal('Command not found: ' + input);
@@ -84,17 +89,22 @@
 
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Enter') {
-        appendToTerminal('> ' + userInput);
-        processCommand(userInput);
-        userInput = '';
+        if (userInput.trim() !== '') {
+          appendToTerminal('> ' + userInput.trim());
+          processCommand(userInput.trim());
+          userInput = '';
+        }
       } else if (event.key === 'Backspace') {
         userInput = userInput.slice(0, -1);
       } else if (event.key.length === 1) {
         userInput += event.key;
       }
 
-      const lastLine = terminal.lastElementChild;
-      lastLine.textContent = '> ' + userInput;
+      if (!terminal.lastElementChild || !terminal.lastElementChild.textContent.startsWith('>')) {
+        appendToTerminal('> ' + userInput);
+      } else {
+        terminal.lastElementChild.textContent = '> ' + userInput;
+      }
     });
 
     // Initialize input line
