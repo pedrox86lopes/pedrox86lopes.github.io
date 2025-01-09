@@ -1,37 +1,103 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Pedro Lopes</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pedro Lopes / Terminal</title>
+  <style>
+    body {
+      background-color: black;
+      color: green;
+      font-family: monospace;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
 
-<meta name="viewport" content="width=device-width"/>
-<meta name="description" content="The Curriculum Vitae of Pedro Lopes."/>
-<meta charset="UTF-8"> 
+    #terminal {
+      width: 80%;
+      height: 70%;
+      background-color: #000000;
+      border: 2px solid #00ff00;
+      padding: 10px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
 
-<link type="text/css" rel="stylesheet" href="style.css">
-<link href='http://fonts.googleapis.com/css?family=Rokkitt:400,700|Lato:400,300' rel='stylesheet' type='text/css'>
+    .input-line {
+      display: flex;
+    }
 
-<!--[if lt IE 9]>
-<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-<![endif]-->
+    .prompt {
+      color: green;
+    }
+
+    .user-input {
+      background: none;
+      border: none;
+      color: green;
+      outline: none;
+      font-family: monospace;
+      flex-grow: 1;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
 </head>
-<body id="top">
-<div id="cv" class="instaFade">
-	<div class="mainDetails">
-		<div id="headshot" class="quickFade">
-			<img src="https://upload.wikimedia.org/wikipedia/en/thumb/3/32/Dharma_Initiative_logo.svg/1200px-Dharma_Initiative_logo.svg.png" alt="Pedro Lopes :)" />
-		</div>
-		
-		<div id="name">
-			<h1 class="quickFade delayTwo">Pedro Lopes</h1>
-			<h2 class="quickFade delayThree"><li>w: <a href="http://pedrox86lopes.github.io/pedrox86/">Web Page</a></li></h2>
-		</div>
-		
-		<div id="contactDetails" class="quickFade delayFour">
-			<ul>
-				<li>e: <a href="mailto:pedro.secinfo@gmail.com" target="_blank">pedro.lopes@tutamail.com</a></li>
-				
-				<li>n: +351 </li>
-			</ul>
+<body>
+  <div id="terminal">
+    <div>Welcome to the Terminal!</div>
+    <div>Type <strong>help</strong> to see available commands.</div>
+    <div>>:</div>
+  </div>
+  <script>
+    const terminal = document.getElementById('terminal');
+    let userInput = '';
 
+    function appendToTerminal(content) {
+      const line = document.createElement('div');
+      line.textContent = content;
+      terminal.appendChild(line);
+      terminal.scrollTop = terminal.scrollHeight;
+    }
+
+    function processCommand(input) {
+      switch (input.toLowerCase()) {
+        case 'help':
+          appendToTerminal('Available commands:');
+          appendToTerminal(' - Get Pedro Email');
+          break;
+        case 'get pedro email':
+          appendToTerminal('Pedro Email: pedro.lopes@tutamail.com');
+          break;
+        default:
+          appendToTerminal('Command not found: ' + input);
+          break;
+      }
+    }
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        appendToTerminal('> ' + userInput);
+        processCommand(userInput);
+        userInput = '';
+      } else if (event.key === 'Backspace') {
+        userInput = userInput.slice(0, -1);
+      } else if (event.key.length === 1) {
+        userInput += event.key;
+      }
+
+      const lastLine = terminal.lastElementChild;
+      lastLine.textContent = '> ' + userInput;
+    });
+
+    // Initialize input line
+    appendToTerminal('> ');
+  </script>
 </body>
 </html>
