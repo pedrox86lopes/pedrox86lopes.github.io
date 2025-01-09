@@ -65,15 +65,16 @@
       terminal.appendChild(line);
       terminal.scrollTop = terminal.scrollHeight;
     }
-
+    
     function processCommand(input) {
       switch (input.toLowerCase()) {
         case 'help':
           appendToTerminal('Available commands:');
+          appendToTerminal(' - help');
           appendToTerminal(' - Get Pedro Email');
           break;
         case 'get pedro email':
-          appendToTerminal('Pedro Email: pedro.lopes@tutamail.com');
+          appendToTerminal('Pedro Email: pedro@example.com');
           break;
         default:
           appendToTerminal('Command not found: ' + input);
