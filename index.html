@@ -18,46 +18,51 @@
     }
 
     #terminal {
-      width: 80%;
-      height: 70%;
+      width: 90%;
+      height: 80%;
+      max-width: 600px;
+      max-height: 400px;
       background-color: #000000;
       border: 2px solid #00ff00;
       padding: 10px;
       overflow-y: auto;
       white-space: pre-wrap;
+      box-sizing: border-box;
     }
 
-    .input-line {
-      display: flex;
+    #hiddenInput {
+      position: absolute;
+      top: -100px;
+      opacity: 0;
     }
 
-    .prompt {
-      color: green;
+    @media (max-width: 768px) {
+      #terminal {
+        width: 95%;
+        height: 85%;
+      }
     }
 
-    .user-input {
-      background: none;
-      border: none;
-      color: green;
-      outline: none;
-      font-family: monospace;
-      flex-grow: 1;
-    }
-
-    .hidden {
-      display: none;
+    @media (max-width: 480px) {
+      #terminal {
+        font-size: 14px;
+      }
     }
   </style>
 </head>
 <body>
-  <div id="terminal">
-    <div>Welcome to the <strong>Terminal</strong></div>
+  <div id="terminal" onclick="focusInput()">
+    <div>Welcome to the <strong>Terminal</strong>!</div>
     <div>Type <strong>help</strong> to see available commands.</div>
-    <div>>:</div>
   </div>
+  <input type="text" id="hiddenInput" autofocus />
   <script>
     const terminal = document.getElementById('terminal');
-    let userInput = '';
+    const hiddenInput = document.getElementById('hiddenInput');
+
+    function focusInput() {
+      hiddenInput.focus();
+    }
 
     function appendToTerminal(content) {
       const line = document.createElement('div');
@@ -71,44 +76,30 @@
         case 'help':
           appendToTerminal('Available commands:');
           appendToTerminal(' - help');
-          appendToTerminal(' - Get Pedro Email');
-          appendToTerminal(' - Where Pedro is located?');
-
+          appendToTerminal(' - Pedro Email');
           break;
-        case 'get pedro email':
-          appendToTerminal('Pedro Email: pedro.lopes@tutamail.com');
-          break;
-        case 'Where Pedro is located?'':
-          appendToTerminal('You (maybe) can find me in Portugal - But, im always Online Remotelly :) ');
+        case 'pedro email':
+          appendToTerminal('Email: pedro.lopes@tutamail.com');
           break;
         default:
           appendToTerminal('Command not found: ' + input);
           break;
       }
+      appendToTerminal('>:');
     }
 
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter') {
-        if (userInput.trim() !== '') {
-          appendToTerminal('> ' + userInput.trim());
-          processCommand(userInput.trim());
-          userInput = '';
-        }
-      } else if (event.key === 'Backspace') {
-        userInput = userInput.slice(0, -1);
-      } else if (event.key.length === 1) {
-        userInput += event.key;
-      }
-
-      if (!terminal.lastElementChild || !terminal.lastElementChild.textContent.startsWith('>')) {
-        appendToTerminal('> ' + userInput);
-      } else {
-        terminal.lastElementChild.textContent = '> ' + userInput;
+    hiddenInput.addEventListener('input', () => {
+      const inputValue = hiddenInput.value;
+      if (inputValue.endsWith('\n')) {
+        const command = inputValue.trim();
+        appendToTerminal('> ' + command);
+        processCommand(command);
+        hiddenInput.value = '';
       }
     });
 
-    // Initialize input line
-    appendToTerminal('> ');
+    // Initialize input prompt
+    appendToTerminal('>:');
   </script>
 </body>
 </html>
