@@ -3,106 +3,256 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pedro Lopes / Terminal</title>
+  <title>Pedro Lopes_TERMINAL</title>
   <style>
+    :root {
+      --terminal-green: #00ff00;
+      --terminal-glow: rgba(0, 255, 0, 0.1);
+      --background: #001100;
+    }
+
     body {
-      background-color: black;
-      color: green;
-      font-family: monospace;
+      background-color: var(--background);
+      color: var(--terminal-green);
+      font-family: 'Courier New', monospace;
       margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+      padding: 20px;
+      min-height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* CRT Screen Effect */
+    body::after {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.15) 0px,
+        rgba(0, 0, 0, 0.15) 1px,
+        transparent 1px,
+        transparent 2px
+      );
+      pointer-events: none;
+      z-index: 999;
     }
 
     #terminal {
-      width: 90%;
-      height: 80%;
-      max-width: 600px;
-      max-height: 400px;
-      background-color: #000000;
-      border: 2px solid #00ff00;
-      padding: 10px;
+      max-width: 800px;
+      margin: 0 auto;
+      border: 1px solid var(--terminal-green);
+      box-shadow: 0 0 20px var(--terminal-glow);
+      padding: 20px;
+      min-height: 80vh;
       overflow-y: auto;
-      white-space: pre-wrap;
-      box-sizing: border-box;
+      position: relative;
     }
 
-    #hiddenInput {
+    .prompt {
+      color: var(--terminal-green);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 10px;
+      height: 20px;
+      background: var(--terminal-green);
+      animation: blink 1s infinite;
+    }
+
+    .output {
+      margin: 15px 0;
+      line-height: 1.5;
+    }
+
+    .error { color: #ff4444; }
+    .success { color: #00ff00; }
+    .warning { color: #ffaa00; }
+    .system { color: #00aaff; }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    @keyframes scanline {
+      from { transform: translateY(-100%); }
+      to { transform: translateY(100%); }
+    }
+
+    .command-input {
+      background: transparent;
+      border: none;
+      color: var(--terminal-green);
+      font-family: 'Courier New', monospace;
+      font-size: 16px;
+      width: calc(100% - 120px);
+      caret-color: transparent;
+    }
+
+    .command-input:focus {
+      outline: none;
+    }
+
+    /* Retro terminal loading animation */
+    .boot-sequence {
       position: absolute;
-      top: -100px;
-      opacity: 0;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--background);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: boot 3s forwards;
     }
 
-    @media (max-width: 768px) {
-      #terminal {
-        width: 95%;
-        height: 85%;
-      }
-    }
-
-    @media (max-width: 480px) {
-      #terminal {
-        font-size: 14px;
-      }
+    @keyframes boot {
+      0% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { opacity: 0; display: none; }
     }
   </style>
 </head>
 <body>
-  <div id="terminal" onclick="focusInput()">
-    <div>Welcome to the <strong>Terminal</strong>!</div>
-    <div>To contact Pedro you have 01 <strong>option</strong>: email: pedro.lopes@tutamail.com</div>
-    <div>Pedro Lopes is <strong>based</strong> in Portugal.</div>
-    <div>But has <strong>remote</strong> availability.</div>
-
+  <div class="boot-sequence">
+    <div class="system">INITIALIZING SYSTEM...</div>
   </div>
-  <input type="text" id="hiddenInput" autofocus />
+
+  <div id="terminal">
+    <div class="output system">■ ■ ■ Terminal v0.02 ■ ■ ■</div>
+    <div class="output system">Type 'help' for available commands</div>
+    <div class="input-line">
+      <span class="prompt-symbol">></span>
+      <input type="text" id="commandInput" autofocus>
+    </div>
+  </div>
+
   <script>
+    const commands = {
+      help: `Available commands:
+      [contact]     - contact
+      [secret]    - ???`,
+                
+      contact: `Email: pedro.lopes@tutamail.com\nLinkedIn: linkedin.com/in/pedrolopesdoteth\nGitHub: github.com/pedrox86lopes`,
+      
+      secret: `System override initiated...\n\n` + 
+             `00110100 00101100 00100000 00111000 00101100 00100000 00110001 00110101 00101100 00100000 00110001 00110110 00101100 00100000 00110010 00110011 00101100 00100000 00110100 00110010`
+    };
+
     const terminal = document.getElementById('terminal');
-    const hiddenInput = document.getElementById('hiddenInput');
+    const commandInput = document.getElementById('commandInput');
+    let currentTheme = 0;
+    const themes = ['green', 'cyan', 'amber', 'red'];
 
-    function focusInput() {
-      hiddenInput.focus();
+    function createOutput(content, type = '') {
+      const div = document.createElement('div');
+      div.className = `output ${type}`;
+      div.textContent = content;
+      return div;
     }
 
-    function appendToTerminal(content) {
-      const line = document.createElement('div');
-      line.textContent = content;
-      terminal.appendChild(line);
-      terminal.scrollTop = terminal.scrollHeight;
-    }
+    async function processCommand(cmd) {
+      // Remove current input line
+      const inputLine = document.querySelector('.input-line');
+      inputLine.remove();
 
-    function processCommand(input) {
-      switch (input.toLowerCase().trim()) {
-        case 'help':
-          appendToTerminal('Available commands:');
-          appendToTerminal(' - help');
-          appendToTerminal(' - Pedro Email');
+      // Add command to history
+      const commandOutput = createOutput('', 'command');
+      commandOutput.innerHTML = `<span class="prompt-symbol">$</span> ${cmd}`;
+      terminal.appendChild(commandOutput);
+
+      // Process command
+      switch(cmd.toLowerCase()) {
+        case 'clear':
+          terminal.innerHTML = `
+            <div class="output system">■ ■ ■ Terminal v0.02 ■ ■ ■</div>
+            <div class="output system">Type 'help' for available commands</div>
+          `;
           break;
-        case 'pedro email':
-          appendToTerminal('Email: pedro.lopes@tutamail.com');
+          
+        case 'theme':
+          currentTheme = (currentTheme + 1) % themes.length;
+          document.documentElement.style.setProperty('--terminal-green', 
+            `var(--terminal-${themes[currentTheme]})`);
           break;
+          
+        case 'secret':
+          await typeText(commands.secret, 50);
+          break;
+          
         default:
-          appendToTerminal('Command not found: ' + input);
+          const response = commands[cmd] || `Command not recognized. Type 'help' for options.`;
+          await typeText(response);
           break;
       }
-      appendToTerminal('>:');
+
+      // Add new input line
+      const newInputLine = document.createElement('div');
+      newInputLine.className = 'input-line';
+      newInputLine.innerHTML = `
+        <span class="prompt-symbol">></span>
+        <input type="text" class="command-input" autofocus>
+      `;
+      terminal.appendChild(newInputLine);
+      terminal.scrollTop = terminal.scrollHeight;
+      
+      // Focus new input
+      const newInput = terminal.querySelector('.command-input');
+      newInput.focus();
+      
+      // Add event listener to new input
+      newInput.addEventListener('keydown', handleInput);
     }
 
-    hiddenInput.addEventListener('input', () => {
-      const inputValue = hiddenInput.value;
-      if (inputValue.endsWith('\n')) {
-        const command = inputValue.trim();
-        appendToTerminal('> ' + command);
-        processCommand(command);
-        hiddenInput.value = '';
+    async function typeText(text, speed = 30) {
+      return new Promise(resolve => {
+        const output = createOutput('');
+        terminal.appendChild(output);
+        
+        let i = 0;
+        function type() {
+          if (i < text.length) {
+            output.textContent += text.charAt(i);
+            terminal.scrollTop = terminal.scrollHeight;
+            i++;
+            setTimeout(type, speed);
+          } else {
+            resolve();
+          }
+        }
+        type();
+      });
+    }
+
+    function handleInput(e) {
+      if (e.key === 'Enter') {
+        processCommand(this.value.trim());
+        this.value = '';
       }
+    }
+
+    // Initial setup
+    window.addEventListener('load', () => {
+      setTimeout(async () => {
+        await typeText('-rwx------. 1 root root 1643784 Dec 11 04:54 b0d01s01.efi', 50);
+        await typeText('-rwx------. 1 root root 2602248 Dec 11 04:54 c0dsrs02.efi', 50);
+        await typeText('■ System ready\n\n', 50);
+        commandInput.focus();
+      }, 1000);
     });
 
-    // Initialize input prompt
-    appendToTerminal('>: bash ./run.sh: Permission denied');
+    // Initial input listener
+    commandInput.addEventListener('keydown', handleInput);
   </script>
 </body>
 </html>
